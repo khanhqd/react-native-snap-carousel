@@ -1032,8 +1032,17 @@ export default class Carousel extends Component {
             return;
         }
 
-        this._scrollTo(this._scrollOffsetRef, animated);
-
+        if (Platform.OS == 'android') {
+            if (!this.snapItemTimeout) {
+                this.snapItemTimeout = true;
+                this._scrollTo(this._scrollOffsetRef, animated);
+                this.props.onSnapToItem(index);
+                setTimeout(() => this.snapItemTimeout = false, 200);
+            }
+        } else {
+            this._scrollTo(this._scrollOffsetRef, animated);
+        }
+    
         if (enableMomentum) {
             // iOS fix, check the note in the constructor
             if (IS_IOS && !initial) {
